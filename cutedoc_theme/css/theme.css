@@ -1,5 +1,42 @@
+body, html {
+    height: 100%;
+}
+
+main {
+    min-height: 100%;
+}
+
 body {
-    margin: 1em;
+    color: #242A31;
+}
+
+.nav {
+    width: 25rem;
+    padding-top: 2rem;
+    padding-left: 2rem;
+    background: #F5F6F9;
+    box-shadow: inset -16px 0px 5px -16px #F2F3F6;
+}
+
+.nav-content {
+    width: 100%;
+}
+
+.nav-content > header {
+    font-size: large;
+    border-bottom: 2px solid #EAEFF3;
+    width: 100%;
+}
+
+.main-content {
+    padding: 2rem 5rem;
+    margin: auto;
+    max-width: 60rem;
+}
+
+.toc {
+    width: 20rem;
+    padding: 2rem;
 }
 
 .active a {
