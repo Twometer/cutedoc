@@ -1,4 +1,5 @@
-# Test Docs
+# CuteDoc Theme
 
-This is a test-documentation for the cutedoc theme.
+This is the cutedoc theme for MkDocs. It's inspired by the GitBook theme but written completely from scratch.
 
+Check out the Widget Gallery for more information
