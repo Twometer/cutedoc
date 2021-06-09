@@ -120,6 +120,22 @@ header, h1, h2, h3, h4, h5 {
     margin-bottom: 0;
 }
 
+.main-content tr:not(:last-of-type) {
+    border-bottom: 1px solid #E6ECF1;
+}
+
+.main-content th {
+    border-bottom: 2px solid #E6ECF1;
+}
+
+.main-content td, th {
+    padding: 0.5rem;
+}
+
+.main-content table {
+    width: 100%;
+}
+
 /* TABLE OF CONTENTS */
 .toc {
     width: 20rem;
