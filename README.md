@@ -1,2 +1,4 @@
 # CuteDoc Theme
-Clean GitBook-inspired theme for MkDocs
+CuteDoc is a clean GitBook-inspired theme for MkDocs
+
+![](media/screenshot.png)
