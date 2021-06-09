@@ -1,0 +1,5 @@
+site_name: MkDocs CuteDoc Theme
+theme:
+    name: cutedoc
+
+repo_url: https://github.com/Twometer/cutedoc
