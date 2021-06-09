@@ -103,10 +103,23 @@ header, h1, h2, h3, h4, h5 {
     margin-bottom: 2rem;
 }
 
+.main-content code {
+  
+    background: #F5F7F9;
+    padding: 0.1rem 0.25rem;
+    border-radius: 2px;
+}
+
 .main-content pre {
     background: #F5F7F9;
     padding: 0.8rem;
     border-radius: 2px;
+}
+
+.main-content pre code {
+    padding: 0;
+    border-radius: 0;
+    
 }
 
 .main-content blockquote {
