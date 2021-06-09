@@ -1,14 +1,15 @@
 {% if not nav_item.children %}
-<li {% if nav_item.active %}class="active" {% endif %}>
-    <a href="{{ nav_item.url|url }}">{{ nav_item.title }}</a>
-</li>
-{% else %}
-<li>
+<a href="{{ nav_item.url|url }}" class="nav-item {% if nav_item.active %}active{% endif %}">
     {{ nav_item.title }}
-    <ul>
-        {% for nav_item in nav_item.children %}
+</a>
+{% else %}
+<div class="nav-item {% if depth == 0 %}header{% endif %}">
+    {{ nav_item.title }}
+</div>
+<div class="sublist">
+    {% for nav_item in nav_item.children %}
+        {% set depth = depth + 1 %}
         {% include "nav.html" %}
-        {% endfor %}
-    </ul>
-</li>
+    {% endfor %}
+</div>
 {% endif %}
