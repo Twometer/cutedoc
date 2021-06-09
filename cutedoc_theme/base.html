@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{% if page.title %}{{ page.title }} - {% endif %}{{ config.site_name }}</title>
     <link rel="shortcut icon" href="{{ "img/favicon.ico"|url }}">
@@ -31,8 +31,12 @@
 </head>
 
 <body>
+    <div class="menu-button" id="menu-button">
+        <img src="{{ "img/menu.svg" | url }}" alt="Menu">
+    </div>
+
     <main class="w-100 d-flex flex-row">
-        <section class="nav">
+        <section class="nav" id="nav">
             <div class="nav-content">
                 <header class="nav-header">
                     {% include "logo.html" %}
@@ -46,7 +50,7 @@
             </div>
         </section>
         <section class="flex-fill">
-            <div class="main-content">
+            <div class="main-content" id="main-content">
                 {% block content %}
                 {{ page.content }}
                 {% endblock %}
@@ -63,50 +67,12 @@
         </section>
     </main>
 
-<!--
-    <hr />
-
-    <h2>Next and previous</h2>
-    {% if page.next_page or page.previous_page %}
-    <div>
-        {% if page.previous_page %}
-        <a href="{{ page.previous_page.url|url }}" title="{{ page.previous_page.title }}">&#8592; Previous Page</a>
-        {% else %}
-        &#8592; Previous Page
-        {% endif %}
-        -
-        {% if page.next_page %}
-        <a href="{{ page.next_page.url|url }}" title="{{ page.next_page.title }}" />Next Page &#8594;</a>
-        {% else %}
-        Next Page &#8594;
-        {% endif %}
-    </div>
-    {% endif %}
-
-    <hr />
-
-    <h2>GitHub</h2>
-    {% if config.repo_url %}
-    <a href="{{ config.repo_url }}">{{ config.repo_name }}</a>
-    {% endif %}
-
-    <hr />
-
-    <h2>Table of contents</h2>
-
-
-    <hr />
-
-
-    <hr />
-
-    Made with mkdocs cutedoc theme
-    -->
-
     <!--
     MkDocs version      : {{ mkdocs_version }}
     Docs Build Date UTC : {{ build_date_utc }}
     -->
+
+    <script src="{{ "js/theme.js"|url }}"></script>
 </body>
 
 </html>

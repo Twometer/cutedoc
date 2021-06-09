@@ -9,8 +9,6 @@ main {
 
 body {
     color: #15191D;
-    margin: 0 10%;
-    background: linear-gradient(90deg, #F5F6F9 11%, #fff 11%);
 }
 
 header, h1, h2, h3, h4, h5 {
@@ -20,11 +18,20 @@ header, h1, h2, h3, h4, h5 {
 
 /* NAV */
 .nav {
+    margin-left: -25rem;
     width: 25rem;
     padding-top: 4rem;
     padding-left: 2rem;
     background: #F5F6F9;
     box-shadow: inset -16px 0px 5px -15px #EAEFF3;
+    transition-property: margin-left;
+    transition-duration: .3s;
+}
+.nav.open {
+    margin-left: 0;
+    min-width: 20rem;
+    transition-property: margin-left;
+    transition-duration: .3s;
 }
 
 .nav-content {
@@ -79,9 +86,12 @@ header, h1, h2, h3, h4, h5 {
 
 /* CONTENT */
 .main-content {
-    padding: 4rem 6rem;
-    margin: auto;
+    padding: 2rem 3rem;
     max-width: 60rem;
+    width: 100vw;
+}
+.main-content.nav-open {
+    width: auto;
 }
 
 .main-content h1 {
@@ -104,7 +114,6 @@ header, h1, h2, h3, h4, h5 {
 }
 
 .main-content code {
-  
     background: #F5F7F9;
     padding: 0.1rem 0.25rem;
     border-radius: 2px;
@@ -119,7 +128,6 @@ header, h1, h2, h3, h4, h5 {
 .main-content pre code {
     padding: 0;
     border-radius: 0;
-    
 }
 
 .main-content blockquote {
@@ -151,6 +159,7 @@ header, h1, h2, h3, h4, h5 {
 
 /* TABLE OF CONTENTS */
 .toc {
+    display: none;
     width: 20rem;
     padding: 2rem;
     font-size: .85rem;
@@ -175,4 +184,43 @@ a.toc-item:hover {
     margin-top: 2rem;
     font-weight: bold;
     color: #94A1AB;
+}
+
+/* RESPONSIVENESS */
+.menu-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .75rem;
+    border: 1px solid #E6ECF1;
+    user-select: none;
+}
+
+@media screen and (min-width: 1600px) {
+    body {
+        margin: 0 10%;
+        background: linear-gradient(90deg, #F5F6F9 11%, #fff 11%);
+    }
+}
+
+@media screen and (min-width: 1220px) {
+    .toc {
+        display: block;
+    }
+    .main-content {
+        padding: 4rem 6rem;
+    }
+}
+
+@media screen and (min-width: 985px) {
+    .nav {
+        margin-left: 0;
+    }
+    .main-content {
+        margin: auto;
+        width: auto;
+    }
+    .menu-button {
+        display: none;
+    }
 }
