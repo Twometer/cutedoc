@@ -79,13 +79,71 @@ header, h1, h2, h3, h4, h5 {
 
 /* CONTENT */
 .main-content {
-    padding: 8rem 6rem;
+    padding: 4rem 6rem;
     margin: auto;
     max-width: 60rem;
+}
+
+.main-content h1 {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #E6ECF1;
+}
+
+.main-content h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.main-content hr {
+    background: #E6ECF1;
+    opacity: 1;
+}
+
+.main-content p {
+    margin-bottom: 2rem;
+}
+
+.main-content pre {
+    background: #F5F7F9;
+    padding: 0.8rem;
+    border-radius: 2px;
+}
+
+.main-content blockquote {
+    background: #F5F7F9;
+    padding: 1.25rem;
+    border-left: 2px solid #3884FF;
+    border-radius: 2px;
+}
+
+.main-content blockquote p {
+    margin-bottom: 0;
 }
 
 /* TABLE OF CONTENTS */
 .toc {
     width: 20rem;
     padding: 2rem;
+    font-size: .85rem;
+}
+.toc-item {
+    display: block;
+    text-decoration: none !important;
+    padding: 6px;
+    padding-left: 15px;
+    box-sizing: border-box;
+    border-left: 1px solid #E6ECF1;
+    color: #373F45;
+    font-weight: 600;
+}
+a.toc-item:hover {
+    border-left: 2px solid #3884FF;
+    color: #3884FF;
+}
+.toc-item.header {
+    text-transform: uppercase;
+    letter-spacing: .075rem;
+    margin-top: 2rem;
+    font-weight: bold;
+    color: #94A1AB;
 }

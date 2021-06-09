@@ -53,14 +53,13 @@
             </div>
         </section>
         <section class="toc">
-            <ul>
-                {% for toc_item in page.toc %}
-                <li><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
-                {% for toc_item in toc_item.children %}
-                <li><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
-                {% endfor %}
-                {% endfor %}
-            </ul>
+            <div class="toc-item header">Contents</div>
+            {% for toc_item in page.toc %}
+            <a href="{{ toc_item.url }}" class="toc-item">{{ toc_item.title }}</a>
+            {% for toc_item in toc_item.children %}
+            <a href="{{ toc_item.url }}" class="toc-item">{{ toc_item.title }}</a>
+            {% endfor %}
+            {% endfor %}
         </section>
     </main>
 
