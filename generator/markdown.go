@@ -10,7 +10,6 @@ import (
 	"github.com/yuin/goldmark/text"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 var md = goldmark.New(
@@ -52,11 +51,7 @@ func analyzeDocument(astRoot ast.Node, source []byte, pageInfo *pageInfo) {
 	})
 }
 
-func getFileName(path string) string {
-	return strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
-}
-
-func createPage(mdFile string) (pageInfo, error) {
+func renderMarkdownPage(mdFile string) (pageInfo, error) {
 	result := pageInfo{
 		FilePath: filepath.Clean(mdFile),
 		FileName: getFileName(mdFile),
@@ -72,6 +67,9 @@ func createPage(mdFile string) (pageInfo, error) {
 	context := parser.NewContext(parser.WithIDs(headingid.NewIDs()))
 	astRoot := md.Parser().Parse(reader, parser.WithContext(context))
 	analyzeDocument(astRoot, source, &result)
+	if result.Title == "" {
+		result.Title = prettyTitle(mdFile)
+	}
 
 	// Render to HTML
 	var buf bytes.Buffer

@@ -10,6 +10,6 @@ func HandleError(err error) {
 
 func PrintError(err error, msg string) {
 	if err != nil {
-		log.Println("error: ", msg, "-", err.Error())
+		log.Printf("error: %s: %s\n", msg, err.Error())
 	}
 }
