@@ -1,19 +1,12 @@
 package generator
 
 import (
-	"html/template"
-	"io/fs"
-	"path/filepath"
+	"cutedoc/utils"
+	"text/template"
 )
 
 func GenerateTemplate(themeDir string) (*template.Template, error) {
-	var files []string
-	err := filepath.WalkDir(themeDir, func(path string, d fs.DirEntry, err error) error {
-		if !d.IsDir() && filepath.Ext(path) == ".html" {
-			files = append(files, path)
-		}
-		return nil
-	})
+	files, err := utils.ScanDir(themeDir, ".html")
 	if err != nil {
 		return nil, err
 	}

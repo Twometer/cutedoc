@@ -14,3 +14,6 @@
 # IDEs
 .vscode/
 .idea/
+
+# Output of cutedoc generator
+docs_gen/

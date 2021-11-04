@@ -3,6 +3,7 @@ package main
 import (
 	"cutedoc/generator"
 	"cutedoc/manifest"
+	"cutedoc/utils"
 	"errors"
 	"log"
 	"os"
@@ -43,34 +44,51 @@ func findThemeConfig(themesDir string, themeId string) (manifest.ThemeManifest, 
 	return themeManifest, themeDir, err
 }
 
+type Page struct {
+	Title string
+	Body  string
+}
+
 func main() {
 	config, err := manifest.ParseSourceManifest(sourceManifestName)
-	if err != nil {
-		panic(err)
-	}
+	utils.HandleError(err)
 
 	err = os.MkdirAll(config.OutputPath, os.ModePerm)
-	if err != nil {
-		panic(err)
-	}
+	utils.HandleError(err)
 
 	themesDir, err := findThemesDirectory()
-	if err != nil {
-		panic(err)
-	}
+	utils.HandleError(err)
 
 	theme, themeDir, err := findThemeConfig(themesDir, config.ThemeId)
-	if err != nil {
-		panic(err)
-	}
+	utils.HandleError(err)
 
-	themeTemplate, err := generator.GenerateTemplate(themeDir)
-	if err != nil {
-		panic(err)
-	}
-
-	log.Println(themesDir)
-	log.Println("Processing", config.InputPath)
 	log.Println("Using theme", theme.Name)
-	log.Println("in directory", themeDir)
+	themeTemplate, err := generator.GenerateTemplate(themeDir)
+	utils.HandleError(err)
+
+	files, err := utils.ScanDir(config.InputPath, ".md")
+	utils.HandleError(err)
+
+	for _, file := range files {
+		html, err := generator.GenerateHtml(file)
+		if err != nil {
+			utils.PrintError(err, "failed to generate html for "+file)
+			continue
+		}
+
+		writer, err := os.OpenFile(path.Join(config.OutputPath, "output.html"), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+		if err != nil {
+			utils.PrintError(err, "failed to open output file for "+file)
+			continue
+		}
+
+		err = themeTemplate.ExecuteTemplate(writer, "main.html", Page{
+			Title: "Test",
+			Body:  html,
+		})
+		if err != nil {
+			utils.PrintError(err, "failed to run template for "+file)
+			continue
+		}
+	}
 }
