@@ -87,13 +87,17 @@ func generateFile(wg *sync.WaitGroup, file string, sourceManifest manifest.Sourc
 	}
 }
 
-func GenerateDocumentation(sourceManifest manifest.SourceManifest, themeManifest manifest.ThemeManifest, themeDir string) {
+func GenerateDocumentation(sourceManifest manifest.SourceManifest, themeManifest manifest.ThemeManifest, themeDir string) error {
 	log.Println("Using theme", themeManifest.Name)
 	themeTemplate, err := generateTemplate(themeDir)
-	utils.HandleError(err)
+	if err != nil {
+		return err
+	}
 
 	files, err := utils.ScanDir(sourceManifest.InputPath, ".md")
-	utils.HandleError(err)
+	if err != nil {
+		return err
+	}
 
 	var stopwatch utils.Stopwatch
 	var wg sync.WaitGroup
@@ -105,4 +109,6 @@ func GenerateDocumentation(sourceManifest manifest.SourceManifest, themeManifest
 	}
 	wg.Wait()
 	log.Printf("Generator completed in %d us.\n", stopwatch.Microseconds())
+
+	return nil
 }

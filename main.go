@@ -1,60 +1,54 @@
 package main
 
 import (
-	"cutedoc/generator"
 	"cutedoc/manifest"
 	"cutedoc/utils"
-	"errors"
-	"os"
-	"path"
-	"path/filepath"
+	"github.com/alecthomas/kong"
+	"net/http"
+	"strconv"
 )
 
 const themeManifestName = "theme.ini"
 const sourceManifestName = "cutedoc.ini"
 
-func findThemesBaseDir() (string, error) {
-	envConfig := os.Getenv("CUTEDOC_THEME_DIR")
-	if envConfig != "" {
-		return envConfig, nil
-	}
-
-	executable, err := os.Executable()
-	if err != nil {
-		return "", err
-	}
-
-	baseDir := filepath.Dir(executable)
-	return path.Join(baseDir, "themes"), nil
+type GenerateCommand struct {
 }
 
-func findThemeConfig(themesDir string, themeId string) (manifest.ThemeManifest, string, error) {
-	themeDir := path.Join(themesDir, themeId)
-	themeDirStat, err := os.Stat(themeDir)
+func (cmd *GenerateCommand) Run() error {
+	return runGenerator()
+}
+
+type ServeCommand struct {
+	Port uint16 `arg:"" optional:"" help:"On which port to start the server" default:"9080"`
+}
+
+func (cmd *ServeCommand) Run() error {
+	err := runGenerator()
 	if err != nil {
-		return manifest.ThemeManifest{}, "", err
+		return err
 	}
 
-	if !themeDirStat.IsDir() {
-		return manifest.ThemeManifest{}, "", errors.New("theme is not a directory")
+	sourceManifest, err := manifest.ParseSourceManifest(sourceManifestName)
+	if err != nil {
+		return err
 	}
 
-	themeManifest, err := manifest.ParseThemeManifest(path.Join(themeDir, themeManifestName))
-	return themeManifest, themeDir, err
+	server := http.FileServer(http.Dir(sourceManifest.OutputPath))
+	err = http.ListenAndServe(":"+strconv.Itoa(int(cmd.Port)), server)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var Cli struct {
+	Generate GenerateCommand `cmd:"" help:"Generate the documentation"`
+	Serve    ServeCommand    `cmd:"" help:"Start the development server"`
 }
 
 func main() {
-	sourceManifest, err := manifest.ParseSourceManifest(sourceManifestName)
+	ctx := kong.Parse(&Cli)
+	err := ctx.Run()
 	utils.HandleError(err)
-
-	err = os.MkdirAll(sourceManifest.OutputPath, os.ModePerm)
-	utils.HandleError(err)
-
-	themeBaseDir, err := findThemesBaseDir()
-	utils.HandleError(err)
-
-	themeManifest, themeDir, err := findThemeConfig(themeBaseDir, sourceManifest.ThemeId)
-	utils.HandleError(err)
-
-	generator.GenerateDocumentation(sourceManifest, themeManifest, themeDir)
 }
