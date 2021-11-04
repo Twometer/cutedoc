@@ -12,9 +12,10 @@ import (
 const rootTemplate = "main.html"
 
 type navNode struct {
-	Name     string
-	Url      string
-	Children []navNode
+	Name        string
+	Url         string
+	RelativeUrl string
+	Children    []*navNode
 }
 
 type tocEntry struct {
@@ -41,7 +42,7 @@ type pageContext struct {
 	Generator generatorInfo
 	Now       string
 	Site      manifest.SiteManifest
-	Nav       []navNode
+	Nav       []*navNode
 	RootPath  string
 	OutPath   string
 }
@@ -93,7 +94,8 @@ func openOutputFileForPage(pageContext *pageContext, siteManifest manifest.SiteM
 	return file, err
 }
 
-func generatePageForFile(mdFile string, pageContext *pageContext, siteManifest manifest.SiteManifest, themeTemplate *template.Template) {
+func generateThemedHtmlForPage(pageContext *pageContext, siteManifest manifest.SiteManifest, themeTemplate *template.Template) {
+	mdFile := pageContext.Page.FileName
 	writer, err := openOutputFileForPage(pageContext, siteManifest)
 	if err != nil {
 		utils.PrintError(err, "failed to open output file for "+mdFile)
@@ -107,10 +109,10 @@ func generatePageForFile(mdFile string, pageContext *pageContext, siteManifest m
 	}
 }
 
-func addUrlPrefix(navNodes []navNode, prefix string) {
+func setRelativeUrl(navNodes []*navNode, prefix string) {
 	for _, node := range navNodes {
-		node.Url = prefix + node.Url
-		addUrlPrefix(node.Children, prefix)
+		node.RelativeUrl = prefix + node.Url
+		setRelativeUrl(node.Children, prefix)
 	}
 }
 
@@ -127,17 +129,20 @@ func GenerateDocumentation(siteManifest manifest.SiteManifest, themeManifest man
 
 		for _, dirent := range dir {
 			childPath := filepath.Join(path, dirent.Name())
-			newNode := navNode{
+			newNode := &navNode{
 				Name: dirent.Name(),
 				Url:  "",
 			}
 
 			if dirent.IsDir() {
-				err := walk(childPath, rootDirPrefix+"../", &newNode)
+				err := walk(childPath, rootDirPrefix+"../", newNode)
 				if err != nil {
 					return err
 				}
 			} else if filepath.Ext(dirent.Name()) == ".md" {
+				if dirent.Name() != "index.md" {
+					rootDirPrefix = "../" + rootDirPrefix
+				}
 				context, err := createPageContext(childPath, rootDirPrefix, siteManifest)
 				if err != nil {
 					return err
@@ -153,7 +158,7 @@ func GenerateDocumentation(siteManifest manifest.SiteManifest, themeManifest man
 		return nil
 	}
 
-	err := walk(siteManifest.InputPath, "./", &navTreeRoot)
+	err := walk(siteManifest.InputPath, "", &navTreeRoot)
 	if err != nil {
 		return err
 	}
@@ -163,10 +168,10 @@ func GenerateDocumentation(siteManifest manifest.SiteManifest, themeManifest man
 		return err
 	}
 
-	for _, page := range pageContexts {
-		page.Nav = navTreeRoot.Children
-		addUrlPrefix(page.Nav, page.RootPath)
-		generatePageForFile(page.Page.FilePath, &page, siteManifest, themeTemplate)
+	for _, pageCtx := range pageContexts {
+		pageCtx.Nav = navTreeRoot.Children
+		setRelativeUrl(pageCtx.Nav, pageCtx.RootPath)
+		generateThemedHtmlForPage(&pageCtx, siteManifest, themeTemplate)
 	}
 
 	return nil
