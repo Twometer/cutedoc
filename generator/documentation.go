@@ -18,11 +18,18 @@ type generatorInfo struct {
 	Version string
 }
 
+type tocEntry struct {
+	Id    string
+	Name  string
+	Level int
+}
+
 type pageInfo struct {
 	FilePath string
 	FileName string
 	Title    string
 	Body     string
+	Toc      []tocEntry
 }
 
 type pageContext struct {

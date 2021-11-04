@@ -1,0 +1,16 @@
+<h1 id="page-header">Documentation for {{ .Site.Name }}</h1>
+
+<div id="page-nav" style="border: 1px solid gray;">
+    <h2>Navigation</h2>
+</div>
+
+<div id="page-toc" style="border: 1px solid gray;">
+    <h2>Table of contents</h2>
+    {{ range .Page.Toc }}
+        <a href="#{{ .Id }}">{{ .Name }}</a>
+    {{ end }}
+</div>
+
+<div id="page-body" style="border: 1px solid gray;">
+    {{ .Page.Body }}
+</div>

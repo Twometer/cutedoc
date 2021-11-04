@@ -2,6 +2,7 @@ package generator
 
 import (
 	"bytes"
+	"github.com/jkboxomine/goldmark-headingid"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
@@ -27,12 +28,25 @@ func scanTree(node ast.Node, consumer func(node ast.Node)) {
 }
 
 func analyzeDocument(astRoot ast.Node, source []byte, pageInfo *pageInfo) {
+	ids := headingid.NewIDs()
 	scanTree(astRoot, func(node ast.Node) {
 		switch node.Kind() {
 		case ast.KindHeading:
 			heading := node.(*ast.Heading)
+
+			// Find the page title
 			if heading.Level == 1 && pageInfo.Title == "" {
 				pageInfo.Title = string(heading.Text(source))
+			}
+
+			// Build the table of contents
+			if heading.Level < 3 {
+				headingName := heading.Text(source)
+				pageInfo.Toc = append(pageInfo.Toc, tocEntry{
+					Id:    string(ids.Generate(headingName, ast.KindHeading)),
+					Name:  string(headingName),
+					Level: heading.Level,
+				})
 			}
 		}
 	})
@@ -55,7 +69,8 @@ func createPage(mdFile string) (pageInfo, error) {
 
 	// Parse Markdown
 	reader := text.NewReader(source)
-	astRoot := md.Parser().Parse(reader)
+	context := parser.NewContext(parser.WithIDs(headingid.NewIDs()))
+	astRoot := md.Parser().Parse(reader, parser.WithContext(context))
 	analyzeDocument(astRoot, source, &result)
 
 	// Render to HTML
