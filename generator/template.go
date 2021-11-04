@@ -5,7 +5,7 @@ import (
 	"text/template"
 )
 
-func GenerateTemplate(themeDir string) (*template.Template, error) {
+func generateTemplate(themeDir string) (*template.Template, error) {
 	files, err := utils.ScanDir(themeDir, ".html")
 	if err != nil {
 		return nil, err

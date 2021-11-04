@@ -3,6 +3,7 @@ package manifest
 import (
 	"errors"
 	"gopkg.in/ini.v1"
+	"path/filepath"
 )
 
 func ParseSourceManifest(path string) (SourceManifest, error) {
@@ -28,6 +29,9 @@ func ParseSourceManifest(path string) (SourceManifest, error) {
 	if !result.IsValid() {
 		return result, errors.New("missing required parameters")
 	}
+
+	result.InputPath = filepath.Clean(result.InputPath)
+	result.OutputPath = filepath.Clean(result.OutputPath)
 
 	return result, nil
 }
