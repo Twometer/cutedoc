@@ -7,12 +7,12 @@ import (
 )
 
 func runGenerator() error {
-	sourceManifest, err := manifest.ParseSourceManifest(sourceManifestName)
+	siteManifest, err := manifest.ParseSiteManifest(siteManifestName)
 	if err != nil {
 		return err
 	}
 
-	err = os.MkdirAll(sourceManifest.OutputPath, os.ModePerm)
+	err = os.MkdirAll(siteManifest.OutputPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -22,10 +22,10 @@ func runGenerator() error {
 		return err
 	}
 
-	themeManifest, themeDir, err := findThemeConfig(themeBaseDir, sourceManifest.ThemeId)
+	themeManifest, themeDir, err := findThemeConfig(themeBaseDir, siteManifest.ThemeId)
 	if err != nil {
 		return err
 	}
 
-	return generator.GenerateDocumentation(sourceManifest, themeManifest, themeDir)
+	return generator.GenerateDocumentation(siteManifest, themeManifest, themeDir)
 }

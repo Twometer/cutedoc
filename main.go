@@ -9,7 +9,7 @@ import (
 )
 
 const themeManifestName = "theme.ini"
-const sourceManifestName = "cutedoc.ini"
+const siteManifestName = "cutedoc.ini"
 
 type GenerateCommand struct {
 }
@@ -28,12 +28,12 @@ func (cmd *ServeCommand) Run() error {
 		return err
 	}
 
-	sourceManifest, err := manifest.ParseSourceManifest(sourceManifestName)
+	siteManifest, err := manifest.ParseSiteManifest(siteManifestName)
 	if err != nil {
 		return err
 	}
 
-	server := http.FileServer(http.Dir(sourceManifest.OutputPath))
+	server := http.FileServer(http.Dir(siteManifest.OutputPath))
 	err = http.ListenAndServe(":"+strconv.Itoa(int(cmd.Port)), server)
 	if err != nil {
 		return err

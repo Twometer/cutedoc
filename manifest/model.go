@@ -1,6 +1,6 @@
 package manifest
 
-type SourceManifest struct {
+type SiteManifest struct {
 	Name       string
 	ThemeId    string
 	InputPath  string
@@ -16,8 +16,8 @@ type ThemeManifest struct {
 	License     string
 }
 
-func NewDefaultSourceManifest() SourceManifest {
-	return SourceManifest{
+func NewDefaultSiteManifest() SiteManifest {
+	return SiteManifest{
 		ThemeId:    "default",
 		InputPath:  "docs",
 		OutputPath: "docs_gen",
@@ -28,7 +28,7 @@ func NewDefaultThemeManifest() ThemeManifest {
 	return ThemeManifest{}
 }
 
-func (manifest *SourceManifest) IsValid() bool {
+func (manifest *SiteManifest) IsValid() bool {
 	return manifest.Name != "" && manifest.ThemeId != "" && manifest.InputPath != "" && manifest.OutputPath != ""
 }
 

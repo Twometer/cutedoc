@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 )
 
-func ParseSourceManifest(path string) (SourceManifest, error) {
+func ParseSiteManifest(path string) (SiteManifest, error) {
 	manifest, err := ini.Load(path)
 	if err != nil {
-		return SourceManifest{}, err
+		return SiteManifest{}, err
 	}
 
-	result := NewDefaultSourceManifest()
+	result := NewDefaultSiteManifest()
 
 	pageSection := manifest.Section("Page")
 	if pageSection != nil {

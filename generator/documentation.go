@@ -29,11 +29,13 @@ type pageContext struct {
 	Page      pageInfo
 	Generator generatorInfo
 	Now       string
+	Site      manifest.SiteManifest
 }
 
-func newPageContext(info pageInfo) pageContext {
+func newPageContext(page pageInfo, site manifest.SiteManifest) pageContext {
 	return pageContext{
-		Page: info,
+		Page: page,
+		Site: site,
 		Generator: generatorInfo{
 			Name:    "Cutedoc",
 			Version: "1.0.0",
@@ -42,10 +44,10 @@ func newPageContext(info pageInfo) pageContext {
 	}
 }
 
-func openFile(sourceManifest manifest.SourceManifest, info *pageInfo) (*os.File, error) {
+func openFile(siteManifest manifest.SiteManifest, info *pageInfo) (*os.File, error) {
 	// Build the path for the output directory
-	relativePath := info.FilePath[len(sourceManifest.InputPath)+1:]
-	outputDirPath := filepath.Join(sourceManifest.OutputPath, filepath.Dir(relativePath))
+	relativePath := info.FilePath[len(siteManifest.InputPath)+1:]
+	outputDirPath := filepath.Join(siteManifest.OutputPath, filepath.Dir(relativePath))
 
 	// If it is not the index file, put it in its own subdirectory so that we get /subdir/index.html
 	// which we can open in the browser as just /subdir
@@ -64,7 +66,7 @@ func openFile(sourceManifest manifest.SourceManifest, info *pageInfo) (*os.File,
 	return file, err
 }
 
-func generateFile(wg *sync.WaitGroup, file string, sourceManifest manifest.SourceManifest, themeTemplate *template.Template) {
+func generateFile(wg *sync.WaitGroup, file string, siteManifest manifest.SiteManifest, themeTemplate *template.Template) {
 	defer wg.Done()
 
 	pageInfo, err := createPage(file)
@@ -73,13 +75,13 @@ func generateFile(wg *sync.WaitGroup, file string, sourceManifest manifest.Sourc
 		return
 	}
 
-	writer, err := openFile(sourceManifest, &pageInfo)
+	writer, err := openFile(siteManifest, &pageInfo)
 	if err != nil {
 		utils.PrintError(err, "failed to open output file for "+file)
 		return
 	}
 
-	pageContext := newPageContext(pageInfo)
+	pageContext := newPageContext(pageInfo, siteManifest)
 	err = themeTemplate.ExecuteTemplate(writer, rootTemplate, pageContext)
 	if err != nil {
 		utils.PrintError(err, "failed to run template for "+file)
@@ -87,14 +89,14 @@ func generateFile(wg *sync.WaitGroup, file string, sourceManifest manifest.Sourc
 	}
 }
 
-func GenerateDocumentation(sourceManifest manifest.SourceManifest, themeManifest manifest.ThemeManifest, themeDir string) error {
+func GenerateDocumentation(siteManifest manifest.SiteManifest, themeManifest manifest.ThemeManifest, themeDir string) error {
 	log.Println("Using theme", themeManifest.Name)
 	themeTemplate, err := generateTemplate(themeDir)
 	if err != nil {
 		return err
 	}
 
-	files, err := utils.ScanDir(sourceManifest.InputPath, ".md")
+	files, err := utils.ScanDir(siteManifest.InputPath, ".md")
 	if err != nil {
 		return err
 	}
@@ -105,7 +107,7 @@ func GenerateDocumentation(sourceManifest manifest.SourceManifest, themeManifest
 	stopwatch.Reset()
 	for _, file := range files {
 		wg.Add(1)
-		go generateFile(&wg, file, sourceManifest, themeTemplate)
+		go generateFile(&wg, file, siteManifest, themeTemplate)
 	}
 	wg.Wait()
 	log.Printf("Generator completed in %d us.\n", stopwatch.Microseconds())
