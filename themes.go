@@ -2,6 +2,7 @@ package main
 
 import (
 	"cutedoc/manifest"
+	"cutedoc/utils"
 	"errors"
 	"os"
 	"path"
@@ -34,6 +35,6 @@ func findThemeConfig(themesDir string, themeId string) (manifest.ThemeManifest, 
 		return manifest.ThemeManifest{}, "", errors.New("theme is not a directory")
 	}
 
-	themeManifest, err := manifest.ParseThemeManifest(path.Join(themeDir, themeManifestName))
+	themeManifest, err := manifest.ParseThemeManifest(path.Join(themeDir, utils.ThemeManifestName))
 	return themeManifest, themeDir, err
 }

@@ -3,11 +3,13 @@ package main
 import (
 	"cutedoc/generator"
 	"cutedoc/manifest"
+	"cutedoc/utils"
+	"log"
 	"os"
 )
 
 func runGenerator() error {
-	siteManifest, err := manifest.ParseSiteManifest(siteManifestName)
+	siteManifest, err := manifest.ParseSiteManifest(utils.SiteManifestName)
 	if err != nil {
 		return err
 	}
@@ -27,5 +29,6 @@ func runGenerator() error {
 		return err
 	}
 
-	return generator.GenerateDocumentation(siteManifest, themeManifest, themeDir)
+	log.Printf("using theme: '%s' by %s", themeManifest.Name, themeManifest.Author)
+	return generator.GenerateDocumentation(siteManifest, themeDir)
 }

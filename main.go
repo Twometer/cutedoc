@@ -8,9 +8,6 @@ import (
 	"strconv"
 )
 
-const themeManifestName = "theme.ini"
-const siteManifestName = "cutedoc.ini"
-
 type GenerateCommand struct {
 }
 
@@ -28,7 +25,7 @@ func (cmd *ServeCommand) Run() error {
 		return err
 	}
 
-	siteManifest, err := manifest.ParseSiteManifest(siteManifestName)
+	siteManifest, err := manifest.ParseSiteManifest(utils.SiteManifestName)
 	if err != nil {
 		return err
 	}
