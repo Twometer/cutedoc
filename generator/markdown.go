@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/jkboxomine/goldmark-headingid"
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
@@ -12,8 +13,9 @@ import (
 	"path/filepath"
 )
 
+// todo: configurable highlighter (https://github.com/yuin/goldmark-highlighting)
 var md = goldmark.New(
-	goldmark.WithExtensions(extension.GFM),
+	goldmark.WithExtensions(extension.GFM, highlighting.Highlighting),
 	goldmark.WithParserOptions(
 		parser.WithAutoHeadingID(),
 	),
