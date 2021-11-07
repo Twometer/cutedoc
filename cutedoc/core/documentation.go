@@ -1,6 +1,7 @@
-package generator
+package core
 
 import (
+	"cutedoc/diagnostics"
 	"cutedoc/manifest"
 	"cutedoc/utils"
 	"log"
@@ -47,7 +48,7 @@ type pageContext struct {
 }
 
 func isIndexFile(filePath string) bool {
-	return utils.GetFileName(filePath) == utils.IndexFileName
+	return utils.GetFileName(filePath) == IndexFileName
 }
 
 func findDirForPage(page pageInfo, siteManifest manifest.SiteManifest) string {
@@ -74,8 +75,8 @@ func createPageContext(mdFile string, rootPath string, siteManifest manifest.Sit
 		Page: page,
 		Site: siteManifest,
 		Generator: generatorInfo{
-			Name:    utils.ProgramName,
-			Version: utils.ProgramVersion,
+			Name:    ProgramName,
+			Version: ProgramVersion,
 		},
 		Now:      time.Now().Format("2006-01-02 15:04:05.000"),
 		RootPath: rootPath,
@@ -101,13 +102,13 @@ func generateThemedHtmlForPage(pageContext *pageContext, siteManifest manifest.S
 	mdFile := pageContext.Page.FileName
 	writer, err := openOutputFileForPage(pageContext, siteManifest)
 	if err != nil {
-		utils.PrintError(err, "failed to open output file for "+mdFile)
+		diagnostics.PrintError(err, "failed to open output file for "+mdFile)
 		return
 	}
 
-	err = themeTemplate.ExecuteTemplate(writer, utils.RootTemplateName, pageContext)
+	err = themeTemplate.ExecuteTemplate(writer, RootTemplateName, pageContext)
 	if err != nil {
-		utils.PrintError(err, "failed to execute template for "+mdFile)
+		diagnostics.PrintError(err, "failed to execute template for "+mdFile)
 		return
 	}
 }
@@ -161,7 +162,7 @@ func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *
 }
 
 func GenerateDocumentation(siteManifest manifest.SiteManifest, themeDir string) error {
-	var stopwatch utils.Stopwatch
+	var stopwatch diagnostics.Stopwatch
 	stopwatch.Reset()
 
 	// Generate the documentation tree

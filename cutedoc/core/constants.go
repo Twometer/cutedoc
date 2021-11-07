@@ -1,4 +1,4 @@
-package utils
+package core
 
 const ProgramName = "Cutedoc"
 const ProgramVersion = "1.0.0"

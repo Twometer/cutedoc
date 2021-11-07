@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"cutedoc/diagnostics"
 	"github.com/iancoleman/strcase"
 	"path/filepath"
 	"regexp"
@@ -11,7 +12,7 @@ var pathRegex *regexp.Regexp
 
 func init() {
 	regex, err := regexp.Compile("^(\\.\\./)*")
-	HandleError(err)
+	diagnostics.HandleError(err)
 
 	pathRegex = regex
 }

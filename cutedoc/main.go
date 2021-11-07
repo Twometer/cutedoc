@@ -1,8 +1,9 @@
 package main
 
 import (
+	"cutedoc/core"
+	"cutedoc/diagnostics"
 	"cutedoc/manifest"
-	"cutedoc/utils"
 	"github.com/alecthomas/kong"
 	"net/http"
 	"strconv"
@@ -25,7 +26,7 @@ func (cmd *ServeCommand) Run() error {
 		return err
 	}
 
-	siteManifest, err := manifest.ParseSiteManifest(utils.SiteManifestName)
+	siteManifest, err := manifest.ParseSiteManifest(core.SiteManifestName)
 	if err != nil {
 		return err
 	}
@@ -47,5 +48,5 @@ var Cli struct {
 func main() {
 	ctx := kong.Parse(&Cli)
 	err := ctx.Run()
-	utils.HandleError(err)
+	diagnostics.HandleError(err)
 }
