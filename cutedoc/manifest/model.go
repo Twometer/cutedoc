@@ -7,25 +7,19 @@ type SiteManifest struct {
 	OutputPath string
 }
 
+type HighlightingConfig struct {
+	Style       string
+	LineNumbers bool
+}
+
 type ThemeManifest struct {
-	Name        string
-	Description string
-	Repository  string
-	Version     string
-	Author      string
-	License     string
-}
-
-func NewDefaultSiteManifest() SiteManifest {
-	return SiteManifest{
-		ThemeId:    "default",
-		InputPath:  "docs",
-		OutputPath: "docs_gen",
-	}
-}
-
-func NewDefaultThemeManifest() ThemeManifest {
-	return ThemeManifest{}
+	Name         string
+	Description  string
+	Repository   string
+	Version      string
+	Author       string
+	License      string
+	Highlighting HighlightingConfig
 }
 
 func (manifest *SiteManifest) IsValid() bool {
@@ -33,5 +27,5 @@ func (manifest *SiteManifest) IsValid() bool {
 }
 
 func (manifest *ThemeManifest) IsValid() bool {
-	return manifest.Name != "" && manifest.Version != ""
+	return manifest.Name != "" && manifest.Version != "" && manifest.Highlighting.Style != ""
 }

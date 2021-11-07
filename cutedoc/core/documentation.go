@@ -65,8 +65,8 @@ func findDirForPage(page pageInfo, siteManifest manifest.SiteManifest) string {
 	return outputDirPath
 }
 
-func createPageContext(mdFile string, rootPath string, siteManifest manifest.SiteManifest) (pageContext, error) {
-	page, err := renderMarkdownPage(mdFile)
+func createPageContext(mdFile string, rootPath string, siteManifest manifest.SiteManifest, themeManifest manifest.ThemeManifest) (pageContext, error) {
+	page, err := renderMarkdownPage(mdFile, themeManifest)
 	if err != nil {
 		return pageContext{}, err
 	}
@@ -126,7 +126,7 @@ func generateThemedHtmlForPage(pageContext *pageContext, siteManifest manifest.S
 	}
 }
 
-func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *navNode, siteManifest manifest.SiteManifest, contexts *[]pageContext) error {
+func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *navNode, siteManifest manifest.SiteManifest, themeManifest manifest.ThemeManifest, contexts *[]pageContext) error {
 	dir, err := os.ReadDir(dirPath)
 	if err != nil {
 		return err
@@ -140,7 +140,7 @@ func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *
 		}
 
 		if dirent.IsDir() {
-			err := prepareDocumentationTree(childPath, rootDirPrefix+"../", newNode, siteManifest, contexts)
+			err := prepareDocumentationTree(childPath, rootDirPrefix+"../", newNode, siteManifest, themeManifest, contexts)
 			if err != nil {
 				return err
 			}
@@ -153,7 +153,7 @@ func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *
 				rootDirPrefix = "../" + rootDirPrefix
 			}
 
-			context, err := createPageContext(childPath, rootDirPrefix, siteManifest)
+			context, err := createPageContext(childPath, rootDirPrefix, siteManifest, themeManifest)
 			if err != nil {
 				return err
 			}
@@ -187,14 +187,14 @@ func copyMediaFiles(siteManifest manifest.SiteManifest, themeDir string) error {
 	return nil
 }
 
-func GenerateDocumentation(siteManifest manifest.SiteManifest, themeDir string) error {
+func GenerateDocumentation(siteManifest manifest.SiteManifest, themeManifest manifest.ThemeManifest, themeDir string) error {
 	var stopwatch diagnostics.Stopwatch
 	stopwatch.Reset()
 
 	// Generate the documentation tree
 	var navTreeRoot navNode
 	var generatedPageContexts []pageContext
-	err := prepareDocumentationTree(siteManifest.InputPath, "", &navTreeRoot, siteManifest, &generatedPageContexts)
+	err := prepareDocumentationTree(siteManifest.InputPath, "", &navTreeRoot, siteManifest, themeManifest, &generatedPageContexts)
 	if err != nil {
 		return err
 	}

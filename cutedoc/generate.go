@@ -32,5 +32,5 @@ func runGenerator() error {
 	diagnostics.Debug(func() {
 		log.Printf("using theme: '%s' by %s", themeManifest.Name, themeManifest.Author)
 	})
-	return core.GenerateDocumentation(siteManifest, themeDir)
+	return core.GenerateDocumentation(siteManifest, themeManifest, themeDir)
 }

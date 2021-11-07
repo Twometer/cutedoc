@@ -12,18 +12,18 @@ func ParseSiteManifest(path string) (SiteManifest, error) {
 		return SiteManifest{}, err
 	}
 
-	result := NewDefaultSiteManifest()
+	result := SiteManifest{}
 
 	pageSection := manifest.Section("Page")
 	if pageSection != nil {
 		result.Name = pageSection.Key("Name").String()
-		result.ThemeId = pageSection.Key("Theme").MustString(result.ThemeId)
+		result.ThemeId = pageSection.Key("Theme").MustString("default")
 	}
 
 	filesSection := manifest.Section("Files")
 	if filesSection != nil {
-		result.InputPath = pageSection.Key("Input").MustString(result.InputPath)
-		result.OutputPath = pageSection.Key("Output").MustString(result.OutputPath)
+		result.InputPath = pageSection.Key("Input").MustString("docs")
+		result.OutputPath = pageSection.Key("Output").MustString("docs_gen")
 	}
 
 	if !result.IsValid() {
@@ -42,16 +42,22 @@ func ParseThemeManifest(path string) (ThemeManifest, error) {
 		return ThemeManifest{}, err
 	}
 
-	result := NewDefaultThemeManifest()
+	result := ThemeManifest{}
 
-	themeSection := manifest.Section("Theme")
-	if themeSection != nil {
-		result.Name = themeSection.Key("Name").String()
-		result.Description = themeSection.Key("Description").String()
-		result.Repository = themeSection.Key("Repository").String()
-		result.Version = themeSection.Key("Version").String()
-		result.Author = themeSection.Key("Author").String()
-		result.License = themeSection.Key("License").String()
+	rootSection := manifest.Section("Theme")
+	if rootSection != nil {
+		result.Name = rootSection.Key("Name").String()
+		result.Description = rootSection.Key("Description").String()
+		result.Repository = rootSection.Key("Repository").String()
+		result.Version = rootSection.Key("Version").String()
+		result.Author = rootSection.Key("Author").String()
+		result.License = rootSection.Key("License").String()
+	}
+
+	highlightingSection := manifest.Section("Highlighting")
+	if highlightingSection != nil {
+		result.Highlighting.Style = highlightingSection.Key("Style").MustString("bw")
+		result.Highlighting.LineNumbers = highlightingSection.Key("LineNumbers").MustBool(false)
 	}
 
 	if !result.IsValid() {

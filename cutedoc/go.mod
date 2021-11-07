@@ -3,6 +3,7 @@ module cutedoc
 go 1.16
 
 require (
+	github.com/alecthomas/chroma v0.9.4 // indirect
 	github.com/alecthomas/kong v0.2.18
 	github.com/iancoleman/strcase v0.2.0
 	github.com/jkboxomine/goldmark-headingid v0.0.0-20200109122657-8b6c16c18388

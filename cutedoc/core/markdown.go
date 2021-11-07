@@ -2,7 +2,9 @@ package core
 
 import (
 	"bytes"
+	"cutedoc/manifest"
 	"cutedoc/utils"
+	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/jkboxomine/goldmark-headingid"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-highlighting"
@@ -12,14 +14,6 @@ import (
 	"github.com/yuin/goldmark/text"
 	"os"
 	"path/filepath"
-)
-
-// todo: configurable highlighter (https://github.com/yuin/goldmark-highlighting)
-var md = goldmark.New(
-	goldmark.WithExtensions(extension.GFM, highlighting.Highlighting),
-	goldmark.WithParserOptions(
-		parser.WithAutoHeadingID(),
-	),
 )
 
 func scanTree(node ast.Node, consumer func(node ast.Node)) {
@@ -54,7 +48,7 @@ func analyzeDocument(astRoot ast.Node, source []byte, pageInfo *pageInfo) {
 	})
 }
 
-func renderMarkdownPage(mdFile string) (pageInfo, error) {
+func renderMarkdownPage(mdFile string, theme manifest.ThemeManifest) (pageInfo, error) {
 	result := pageInfo{
 		FilePath: filepath.Clean(mdFile),
 		FileName: utils.GetFileName(mdFile),
@@ -64,6 +58,21 @@ func renderMarkdownPage(mdFile string) (pageInfo, error) {
 	if err != nil {
 		return result, err
 	}
+
+	// Create Markdown parser
+	md := goldmark.New(
+		goldmark.WithExtensions(extension.GFM,
+			highlighting.NewHighlighting(
+				highlighting.WithStyle(theme.Highlighting.Style),
+				highlighting.WithFormatOptions(
+					html.WithLineNumbers(theme.Highlighting.LineNumbers),
+				),
+			),
+		),
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
+	)
 
 	// Parse Markdown
 	reader := text.NewReader(source)
