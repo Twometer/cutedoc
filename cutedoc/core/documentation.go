@@ -94,7 +94,7 @@ func openOutputFileForPage(pageContext *pageContext, siteManifest manifest.SiteM
 	}
 
 	// Create the file in the output directory
-	file, err := os.OpenFile(filepath.Join(outPath, "index.html"), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+	file, err := os.Create(filepath.Join(outPath, "index.html"))
 	return file, err
 }
 
@@ -116,6 +116,12 @@ func generateThemedHtmlForPage(pageContext *pageContext, siteManifest manifest.S
 	err = processHtml(strings.NewReader(htmlBuf.String()), writer, pageContext)
 	if err != nil {
 		diagnostics.PrintError(err, "failed to run HTML postproc for "+mdFile)
+		return
+	}
+
+	err = writer.Close()
+	if err != nil {
+		diagnostics.PrintError(err, "failed to close output file for "+mdFile)
 		return
 	}
 }
@@ -161,6 +167,24 @@ func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *
 	return nil
 }
 
+func copyMediaFiles(siteManifest manifest.SiteManifest, themeDir string) error {
+	predicate := func(ext string) bool {
+		return ext != ".md" && ext != ".html" && ext != ".ini"
+	}
+
+	err := utils.CopyDirContents(siteManifest.InputPath, siteManifest.OutputPath, predicate)
+	if err != nil {
+		return err
+	}
+
+	err = utils.CopyDirContents(themeDir, siteManifest.OutputPath, predicate)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GenerateDocumentation(siteManifest manifest.SiteManifest, themeDir string) error {
 	var stopwatch diagnostics.Stopwatch
 	stopwatch.Reset()
@@ -183,6 +207,12 @@ func GenerateDocumentation(siteManifest manifest.SiteManifest, themeDir string) 
 	for _, pageCtx := range generatedPageContexts {
 		pageCtx.Nav = navTreeRoot.Children
 		generateThemedHtmlForPage(&pageCtx, siteManifest, themeTemplate)
+	}
+
+	// Copy all the media (non-docs) files
+	err = copyMediaFiles(siteManifest, themeDir)
+	if err != nil {
+		return err
 	}
 
 	log.Printf("done: generated in %d us", stopwatch.Microseconds())
