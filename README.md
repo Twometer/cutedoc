@@ -13,7 +13,7 @@ Cutedoc is a fast and clean static site generator for beautiful project document
 
 ## MkDocs theme
 
-This project started as a theme for MkDocs, but I've since made it into its own static site generator. However, the MkDocs theme is still maintained under the [mkdocs branch](https://github.com/Twometer/cutedoc/tree/mkdocs). It's the same theme as the default branch for the new generator.
+This project started as a theme for MkDocs, but I've since made it into its own static site generator. However, the MkDocs theme is still maintained under the [mkdocs branch](https://github.com/Twometer/cutedoc/tree/mkdocs). It's the same theme as the default theme for the new generator.
 
 ## License
 
