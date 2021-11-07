@@ -47,7 +47,7 @@ type pageContext struct {
 }
 
 func isIndexFile(filePath string) bool {
-	return getFileName(filePath) == utils.IndexFileName
+	return utils.GetFileName(filePath) == utils.IndexFileName
 }
 
 func findDirForPage(page pageInfo, siteManifest manifest.SiteManifest) string {

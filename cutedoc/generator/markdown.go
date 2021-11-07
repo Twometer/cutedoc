@@ -2,6 +2,7 @@ package generator
 
 import (
 	"bytes"
+	"cutedoc/utils"
 	"github.com/jkboxomine/goldmark-headingid"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-highlighting"
@@ -56,7 +57,7 @@ func analyzeDocument(astRoot ast.Node, source []byte, pageInfo *pageInfo) {
 func renderMarkdownPage(mdFile string) (pageInfo, error) {
 	result := pageInfo{
 		FilePath: filepath.Clean(mdFile),
-		FileName: getFileName(mdFile),
+		FileName: utils.GetFileName(mdFile),
 	}
 
 	source, err := os.ReadFile(mdFile)
@@ -70,7 +71,7 @@ func renderMarkdownPage(mdFile string) (pageInfo, error) {
 	astRoot := md.Parser().Parse(reader, parser.WithContext(context))
 	analyzeDocument(astRoot, source, &result)
 	if result.Title == "" {
-		result.Title = prettyTitle(mdFile)
+		result.Title = utils.PrettifyTitle(mdFile)
 	}
 
 	// Render to HTML
