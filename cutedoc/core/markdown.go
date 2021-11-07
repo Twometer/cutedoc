@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"cutedoc/manifest"
 	"cutedoc/utils"
-	"github.com/alecthomas/chroma/formatters/html"
+	chroma "github.com/alecthomas/chroma/formatters/html"
 	"github.com/jkboxomine/goldmark-headingid"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-emoji"
@@ -12,6 +12,7 @@ import (
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 	"os"
 	"path/filepath"
@@ -66,13 +67,16 @@ func renderMarkdownPage(mdFile string, theme manifest.ThemeManifest) (pageInfo, 
 			highlighting.NewHighlighting(
 				highlighting.WithStyle(theme.Highlighting.Style),
 				highlighting.WithFormatOptions(
-					html.WithLineNumbers(theme.Highlighting.LineNumbers),
+					chroma.WithLineNumbers(theme.Highlighting.LineNumbers),
 				),
 			),
 			emoji.Emoji,
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
+		),
+		goldmark.WithRendererOptions(
+			html.WithUnsafe(),
 		),
 	)
 
