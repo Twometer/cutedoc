@@ -7,6 +7,7 @@ import (
 	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/jkboxomine/goldmark-headingid"
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark-emoji"
 	"github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
@@ -68,6 +69,7 @@ func renderMarkdownPage(mdFile string, theme manifest.ThemeManifest) (pageInfo, 
 					html.WithLineNumbers(theme.Highlighting.LineNumbers),
 				),
 			),
+			emoji.Emoji,
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
