@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"cutedoc/diagnostics"
 	"io"
 	"io/fs"
 	"log"
@@ -9,7 +10,9 @@ import (
 )
 
 func copyFile(src string, dst string) error {
-	log.Println("copying", src, "to", dst)
+	diagnostics.Debug(func() {
+		log.Println("copying", src, "to", dst)
+	})
 
 	err := os.MkdirAll(filepath.Dir(dst), os.ModePerm)
 	if err != nil {

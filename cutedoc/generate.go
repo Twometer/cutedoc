@@ -2,6 +2,7 @@ package main
 
 import (
 	"cutedoc/core"
+	"cutedoc/diagnostics"
 	"cutedoc/manifest"
 	"log"
 	"os"
@@ -28,6 +29,8 @@ func runGenerator() error {
 		return err
 	}
 
-	log.Printf("using theme: '%s' by %s", themeManifest.Name, themeManifest.Author)
+	diagnostics.Debug(func() {
+		log.Printf("using theme: '%s' by %s", themeManifest.Name, themeManifest.Author)
+	})
 	return core.GenerateDocumentation(siteManifest, themeDir)
 }

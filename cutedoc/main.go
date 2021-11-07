@@ -1,12 +1,8 @@
 package main
 
 import (
-	"cutedoc/core"
 	"cutedoc/diagnostics"
-	"cutedoc/manifest"
 	"github.com/alecthomas/kong"
-	"net/http"
-	"strconv"
 )
 
 type GenerateCommand struct {
@@ -21,23 +17,7 @@ type ServeCommand struct {
 }
 
 func (cmd *ServeCommand) Run() error {
-	err := runGenerator()
-	if err != nil {
-		return err
-	}
-
-	siteManifest, err := manifest.ParseSiteManifest(core.SiteManifestName)
-	if err != nil {
-		return err
-	}
-
-	server := http.FileServer(http.Dir(siteManifest.OutputPath))
-	err = http.ListenAndServe(":"+strconv.Itoa(int(cmd.Port)), server)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return runServer(int(cmd.Port))
 }
 
 var Cli struct {

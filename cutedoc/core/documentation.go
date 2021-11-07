@@ -145,7 +145,9 @@ func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *
 				return err
 			}
 		} else if filepath.Ext(dirent.Name()) == ".md" {
-			log.Println("processing:", childPath)
+			diagnostics.Debug(func() {
+				log.Println("processing:", childPath)
+			})
 
 			if !isIndexFile(childPath) {
 				rootDirPrefix = "../" + rootDirPrefix
