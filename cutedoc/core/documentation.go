@@ -163,11 +163,11 @@ func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *
 				log.Println("processing:", childPath)
 			})
 
+			currentRootDirPrefix := rootDirPrefix
 			if !isIndexFile(childPath) {
-				rootDirPrefix = "../" + rootDirPrefix
+				currentRootDirPrefix = "../" + currentRootDirPrefix
 			}
-
-			context, err := createPageContext(childPath, rootDirPrefix, siteManifest, themeManifest)
+			context, err := createPageContext(childPath, currentRootDirPrefix, siteManifest, themeManifest)
 			if err != nil {
 				return err
 			}
