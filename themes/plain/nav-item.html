@@ -1,0 +1,12 @@
+<li>
+    {{ if gt (len .Children) 0 }}
+        {{ .Name }}
+        <ul>
+            {{ range .Children }}
+                {{ template "nav-item.html" . }}
+            {{ end }}
+        </ul>
+    {{ else }}
+        <a href="{{ .Url }}">{{ .Name }}</a>
+    {{ end }}
+</li>

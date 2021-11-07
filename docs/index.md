@@ -1,5 +1,18 @@
-# CuteDoc Theme
+# :ribbon: Cutedoc
 
-This is the cutedoc theme for MkDocs. It's inspired by the GitBook theme but written completely from scratch.
+Cutedoc is a fast and clean static site generator
 
-Check out the Widget Gallery for more information
+Available highlighting styles: [see here](https://xyproto.github.io/splash/docs/all.html)
+
+```c++
+#include <cstdio>
+
+class Test {
+public:
+    int foo();
+    void bar();
+    Test *baz();
+}
+```
+
+// TODO
