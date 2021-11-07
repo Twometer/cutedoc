@@ -130,6 +130,9 @@ func generateThemedHtmlForPage(pageContext *pageContext, siteManifest manifest.S
 
 func sortTree(node *navNode) {
 	sort.Slice(node.Children, func(i, j int) bool {
+		if node.Children[i].Url == "." {
+			return true
+		}
 		return len(node.Children[i].Children) < len(node.Children[j].Children)
 	})
 	for _, c := range node.Children {
