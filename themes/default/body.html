@@ -1,3 +1,29 @@
-<div style="border: 1px solid gray;">
-    {{ .Page.Body }}
+<div class="menu-button" id="menu-button">
+    <img src="img/menu.svg" alt="Menu">
 </div>
+
+<main class="w-100 d-flex flex-row">
+    <section class="nav" id="nav">
+        <div class="nav-content">
+            <header class="nav-header">
+                <img src="img/book.svg" alt="" height=32>
+                {{ .Site.Name }}
+            </header>
+
+            {{ range .Nav }}
+                {{ template "nav.html" . }}
+            {{ end }}
+        </div>
+    </section>
+    <section class="flex-fill">
+        <div class="main-content" id="main-content">
+            {{ .Page.Body }}
+        </div>
+    </section>
+    <section class="toc">
+        <div class="toc-item header">Contents</div>
+        {{ range .Page.Toc }}
+            <a href="#{{ .Id }}" class="toc-item">{{ .Name }}</a>
+        {{ end }}
+    </section>
+</main>

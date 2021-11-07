@@ -1,0 +1,10 @@
+{{ if gt (len .Children) 0 }}
+    <div class="nav-item header">{{ .Name }}</div>
+    <div class="sublist">
+        {{ range .Children }}
+            {{ template "nav.html" . }}
+        {{ end }}
+    </div>
+{{ else }}
+    <a class="nav-item" href="{{ .Url }}">{{ .Name }}</a>
+{{ end }}
