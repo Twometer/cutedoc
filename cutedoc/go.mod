@@ -8,5 +8,6 @@ require (
 	github.com/jkboxomine/goldmark-headingid v0.0.0-20200109122657-8b6c16c18388
 	github.com/yuin/goldmark v1.4.2
 	github.com/yuin/goldmark-highlighting v0.0.0-20210516132338-9216f9c5aa01
+	golang.org/x/net v0.0.0-20211105192438-b53810dc28af
 	gopkg.in/ini.v1 v1.63.2
 )

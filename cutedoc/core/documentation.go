@@ -7,15 +7,15 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"time"
 )
 
 type navNode struct {
-	Name        string
-	Url         string
-	RelativeUrl string
-	Children    []*navNode
+	Name     string
+	Url      string
+	Children []*navNode
 }
 
 type tocEntry struct {
@@ -106,17 +106,17 @@ func generateThemedHtmlForPage(pageContext *pageContext, siteManifest manifest.S
 		return
 	}
 
-	err = themeTemplate.ExecuteTemplate(writer, RootTemplateName, pageContext)
+	htmlBuf := strings.Builder{}
+	err = themeTemplate.ExecuteTemplate(&htmlBuf, RootTemplateName, pageContext)
 	if err != nil {
 		diagnostics.PrintError(err, "failed to execute template for "+mdFile)
 		return
 	}
-}
 
-func setRelativeUrl(navNodes []*navNode, prefix string) {
-	for _, node := range navNodes {
-		node.RelativeUrl = prefix + node.Url
-		setRelativeUrl(node.Children, prefix)
+	err = processHtml(strings.NewReader(htmlBuf.String()), writer, pageContext)
+	if err != nil {
+		diagnostics.PrintError(err, "failed to run HTML postproc for "+mdFile)
+		return
 	}
 }
 
@@ -182,7 +182,6 @@ func GenerateDocumentation(siteManifest manifest.SiteManifest, themeDir string) 
 	// Apply the theme to each file and write it to disk
 	for _, pageCtx := range generatedPageContexts {
 		pageCtx.Nav = navTreeRoot.Children
-		setRelativeUrl(pageCtx.Nav, pageCtx.RootPath)
 		generateThemedHtmlForPage(&pageCtx, siteManifest, themeTemplate)
 	}
 
