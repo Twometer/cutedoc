@@ -4,15 +4,18 @@ import (
 	"cutedoc/utils"
 	"golang.org/x/net/html"
 	"io"
+	"strings"
 )
+
+func shouldChangeLink(link string) bool {
+	isHeading := link[0] == '#'
+	isExternal := strings.Contains(link, "://")
+	return !isHeading && !isExternal
+}
 
 func processHtmlNode(node *html.Node, pageContext *pageContext) {
 	for idx, attr := range node.Attr {
-		if attr.Key == "href" || attr.Key == "src" {
-			if attr.Val[0] == '#' {
-				continue
-			}
-
+		if (attr.Key == "href" || attr.Key == "src") && shouldChangeLink(attr.Val) {
 			path := utils.StripParentDirectories(attr.Val)
 			path = pageContext.RootPath + path
 			node.Attr[idx].Val = path
