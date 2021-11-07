@@ -8,6 +8,10 @@ import (
 )
 
 func shouldChangeLink(link string) bool {
+	if len(link) == 0 {
+		return false
+	}
+
 	isHeading := link[0] == '#'
 	isExternal := strings.Contains(link, "://")
 	return !isHeading && !isExternal
