@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 	"time"
@@ -16,6 +17,7 @@ type navNode struct {
 	Name     string
 	Url      string
 	Children []*navNode
+	Active   bool
 }
 
 type tocEntry struct {
@@ -44,7 +46,7 @@ type pageContext struct {
 	Site      manifest.SiteManifest
 	Nav       []*navNode
 	RootPath  string
-	OutPath   string
+	Url       string
 }
 
 func isIndexFile(filePath string) bool {
@@ -80,12 +82,12 @@ func createPageContext(mdFile string, rootPath string, siteManifest manifest.Sit
 		},
 		Now:      time.Now().Format("2006-01-02 15:04:05.000"),
 		RootPath: rootPath,
-		OutPath:  findDirForPage(page, siteManifest),
+		Url:      filepath.ToSlash(findDirForPage(page, siteManifest)),
 	}, nil
 }
 
 func openOutputFileForPage(pageContext *pageContext, siteManifest manifest.SiteManifest) (*os.File, error) {
-	outPath := filepath.Join(siteManifest.OutputPath, pageContext.OutPath)
+	outPath := filepath.Join(siteManifest.OutputPath, pageContext.Url)
 
 	// Create the output directory
 	err := os.MkdirAll(outPath, os.ModePerm)
@@ -126,6 +128,15 @@ func generateThemedHtmlForPage(pageContext *pageContext, siteManifest manifest.S
 	}
 }
 
+func sortTree(node *navNode) {
+	sort.Slice(node.Children, func(i, j int) bool {
+		return len(node.Children[i].Children) < len(node.Children[j].Children)
+	})
+	for _, c := range node.Children {
+		sortTree(c)
+	}
+}
+
 func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *navNode, siteManifest manifest.SiteManifest, themeManifest manifest.ThemeManifest, contexts *[]pageContext) error {
 	dir, err := os.ReadDir(dirPath)
 	if err != nil {
@@ -159,12 +170,14 @@ func prepareDocumentationTree(dirPath string, rootDirPrefix string, parentNode *
 			}
 
 			newNode.Name = context.Page.Title
-			newNode.Url = filepath.ToSlash(context.OutPath)
+			newNode.Url = context.Url
 			*contexts = append(*contexts, context)
 		}
 
 		parentNode.Children = append(parentNode.Children, newNode)
 	}
+
+	sortTree(parentNode)
 
 	return nil
 }
@@ -185,6 +198,13 @@ func copyMediaFiles(siteManifest manifest.SiteManifest, themeDir string) error {
 	}
 
 	return nil
+}
+
+func updateIsActive(pageCtx *pageContext, nodes []*navNode) {
+	for _, c := range nodes {
+		c.Active = c.Url == pageCtx.Url
+		updateIsActive(pageCtx, c.Children)
+	}
 }
 
 func GenerateDocumentation(siteManifest manifest.SiteManifest, themeManifest manifest.ThemeManifest, themeDir string) error {
@@ -208,6 +228,7 @@ func GenerateDocumentation(siteManifest manifest.SiteManifest, themeManifest man
 	// Apply the theme to each file and write it to disk
 	for _, pageCtx := range generatedPageContexts {
 		pageCtx.Nav = navTreeRoot.Children
+		updateIsActive(&pageCtx, pageCtx.Nav)
 		generateThemedHtmlForPage(&pageCtx, siteManifest, themeTemplate)
 	}
 
